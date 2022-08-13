@@ -22,4 +22,6 @@ disk_error:
     call print_string 
     jmp $
 
+%include "printString.asm"
+
 DISK_ERROR_MSG: db "[ERROR] Failed to read disk", 0
