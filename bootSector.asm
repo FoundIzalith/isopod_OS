@@ -7,7 +7,7 @@
     
     mov bx, 0x9000 ; load 5 sectors from boot disk 
     mov dh, 5      
-    mov dh, [BOOT_DRIVE]
+    mov dl, [BOOT_DRIVE]
     call disk_load
 
     mov dx, [0x9000] 
@@ -18,7 +18,6 @@
 
     jmp $
 
-%include "printString.asm"
 %include "diskLoad.asm"
 %include "printHex.asm"
 
