@@ -1,3 +1,6 @@
+print:
+    pusha
+
 print_string:
     pusha
     mov ah, 0x0e
