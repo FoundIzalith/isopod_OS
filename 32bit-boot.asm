@@ -10,16 +10,16 @@
 
     jmp $
 
-%include "print_string.asm"
+%include "printString.asm"
 %include "gdt.asm"
 %include "32bitString.asm"
-%include "switch_to_pm.asm"
+%include "switchToPM.asm"
 
 [bits 32]
 
 BEGIN_PM:
 
-    mov ebx. MSG_PROT_MODE
+    mov ebx, MSG_PROT_MODE
     call print_string_pm
 
     jmp $

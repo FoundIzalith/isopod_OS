@@ -11,7 +11,7 @@ print_string_pm_loop:
     mov ah, WHITE_ON_BLACK
 
     cmp al, 0 ; if al == 0, then we're at the end of string
-    je done  ; so jump to done
+    je print_string_pm_done  ; so jump to done
 
     mov [edx], ax
 
