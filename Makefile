@@ -1,16 +1,19 @@
 all: run
 
-printString.s:
-	nasm printString.asm -o printString.s 
+32bitString.s: 32bitString.asm
+	nasm $< -o $@
 
-diskLoad.s:
-	nasm diskLoad.asm -o diskLoad.s
+32bit-main.s: 32bit-main.asm
+	nasm $< -o $@
 
-isopod.bin: bootSector.asm printString.s diskLoad.s
+switchToPM.s: switchToPM.asm
+	nasm $< -o $@
+
+isopod.bin: 32bitString.s 32bit-main.s switchToPM.s 32bit-boot.asm
 	nasm bootSector.asm -o isopod.bin
 
 run: isopod.bin
 	qemu-system-x86_64 -fda $< 
 
 clean: 
-	rm *.o *.bin 
+	rm *.o *.bin *.s
