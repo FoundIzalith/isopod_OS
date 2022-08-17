@@ -1,10 +1,25 @@
 all: run
 
-isopod.bin: 32bit-boot.asm 
-	nasm 32bit-boot.asm -o isopod.bin
+kernel.o: kernel.c
+	gcc -fno-pie -m32 -ffreestanding -c $< -o $@
 
-run: isopod.bin
+kernelEntry.o: kernelEntry.asm 
+	nasm $< -f elf -o $@
+
+kernel.bin: kernel.o kernelEntry.o 
+	ld -m elf_i386 -e main -o $@ -Ttext 0x1000 $^ --oformat binary 
+
+bootstrap.bin: bootstrap.asm
+	nasm $< -f bin -o $@
+
+isopod-image: bootstrap.bin kernel.bin 
+	cat $^ > isopod-image 
+
+run: isopod-image
 	qemu-system-x86_64 -fda $< 
 
 clean: 
-	rm *.o *.bin *.s
+	rm *.o *.bin
+
+kernel.dis: kernel.bin
+	ndisasm -b 32 $< > $@
