@@ -1,25 +1,29 @@
-all: run
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c)
+OBJ = ${C_SOURCES:.c=.o}
 
-kernel.o: kernel.c
+all: run
+	mkdir build
+
+build/kernel.o: kernel/kernel.c
 	gcc -fno-pie -m32 -ffreestanding -c $< -o $@
 
-kernelEntry.o: kernelEntry.asm 
+build/kernelEntry.o: kernel/kernelEntry.asm 
 	nasm $< -f elf -o $@
 
-kernel.bin: kernel.o kernelEntry.o 
+build/kernel.bin: build/kernel.o build/kernelEntry.o 
 	ld -m elf_i386 -e main -o $@ -Ttext 0x1000 $^ --oformat binary 
 
-bootstrap.bin: bootstrap.asm
+build/bootstrap.bin: boot/bootstrap.asm
 	nasm $< -f bin -o $@
 
-isopod-image: bootstrap.bin kernel.bin 
-	cat $^ > isopod-image 
+build/isopod-image: build/bootstrap.bin build/kernel.bin 
+	cat $^ > build/isopod-image 
 
-run: isopod-image
+run: build/isopod-image
 	qemu-system-x86_64 -fda $< 
 
 clean: 
-	rm *.o *.bin
+	rm build/*.o build/*.bin
 
 kernel.dis: kernel.bin
 	ndisasm -b 32 $< > $@
