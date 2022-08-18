@@ -1,5 +1,9 @@
 #include "screen.h"
 
+int get_screen_offset(int, int);
+int get_cursor_offset();
+int set_cursor(int);
+
 //Print char at col, row, or cursor position
 void print_char(char character, int col, int row, char attribute_byte) {
     unsigned char *vidmem = (unsigned char *) VIDEO_ADDRESS;
@@ -24,4 +28,20 @@ void print_char(char character, int col, int row, char attribute_byte) {
     offset += 2;
     offset = handle_scrolling(offset);
     set_cursor(offset);
+}
+
+int get_screen_offset(int row, int col) {
+    return (2 * (row * MAX_COLS + col));
+}
+
+void set_cursor(int offset) {
+    port_byte_out(REG_SCREEN_CTRL, 14);
+    port_byte_out(REG_SCREEN_DATA, (unsigned char)(offset >> 8));
+    port_byte_out(REG_SCREEN_CTRL, 15);
+}
+
+int get_cursor() 
+{
+    cursor_offset -= 2 * MAX_COLS;
+    return cursor_offset;
 }
